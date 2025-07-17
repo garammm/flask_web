@@ -1,0 +1,26 @@
+name: nodejs CICD
+
+# 구독할 이벤트
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+    # step에서 usesu와 run의 차이는 uses는 존재한느 기능을 호출하는 것이고 run은 실행 명령
+    steps:
+      - uses: actions/checkout@v2     # 코드를 가져오는 부분
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm run build --if-present
+      - run: npm test
